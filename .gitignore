@@ -1,0 +1,9 @@
+*.bin
+*.obj
+*.exe
+.vs/
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/

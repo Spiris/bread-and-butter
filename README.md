@@ -1,1 +1,1 @@
-A BETTER README (do not read) .gitignore
+Lets make something for the people!

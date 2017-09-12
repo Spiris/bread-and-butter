@@ -1,1 +1,1 @@
-This is a thing.s
+A BETTER README (do not read) .gitignore

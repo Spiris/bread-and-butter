@@ -16,6 +16,9 @@ class BNB_API UWorldNexus : public UObject
 {
 	GENERATED_BODY()
 public:
+	static struct FIPv4Endpoint GetLocalEndpoint();
+	UWorldNexus();
+	virtual UWorld* GetWorld() const override { return GetOuter()->GetWorld(); }
 	static UWorldNexus* Get(UObject* WorldContextObject);
 
 	void InitializeNexus();
@@ -23,7 +26,10 @@ public:
 
 	void ReceiveMessage(const FNexusMessage& Message);
 
-	UWorldNexus();
+	
+	
 private:
+	FTimerHandle RelayPollingHandle;
+	void PollNexusRelay();
 	FNexusRelay* Relay;
 };

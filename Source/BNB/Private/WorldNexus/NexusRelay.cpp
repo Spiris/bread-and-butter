@@ -5,30 +5,70 @@
 #include "NexusRelayConnection.h"
 #include "NexusMessage.h"
 #include "WorldNexus.h"
+#include "Sockets.h"
+#include "Common/TcpListener.h"
 
 FNexusRelay::FNexusRelay()
 {
-
+}
+FIPv4Endpoint FNexusRelay::GetLocalEndpoint()
+{
+	if (TcpListener)
+	{
+		return TcpListener->GetLocalEndpoint();
+	}
+	return FIPv4Endpoint::Any;
 }
 FNexusRelay::~FNexusRelay()
 {
-
+	CloseRelay();
 }
-bool FNexusRelay::Init()
+void FNexusRelay::OpenRelay(const FIPv4Endpoint& InListenEndpoint)
 {
+	if (InListenEndpoint != FIPv4Endpoint::Any)
+	{
+		TcpListener = new FTcpListener(InListenEndpoint);
+		TcpListener->OnConnectionAccepted().BindRaw(this, &FNexusRelay::AcceptIncomingConnection);
+		UE_LOG(LogNexus, Log, TEXT("Nexus relay listening for connections on %s"), *InListenEndpoint.ToString());
+	}
+}
+bool FNexusRelay::AcceptIncomingConnection(FSocket* InSocket, const FIPv4Endpoint& Endpoint)
+{
+	PendingConnections.Enqueue(new FNexusRelayConnection(InSocket, Endpoint));
 	return true;
 }
-uint32 FNexusRelay::Run()
+void FNexusRelay::AddConnectionAtEndpoint(const FIPv4Endpoint& Endpoint)
 {
-	return 0;
+	FSocket* Socket = FTcpSocketBuilder(TEXT("NexusRelay.Connection"));
+	if (Socket)
+	{
+		if (!Socket->Connect(*Endpoint.ToInternetAddr()))
+		{
+			ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
+		}
+		else
+		{
+			PendingConnections.Enqueue(new FNexusRelayConnection(Socket, Endpoint));
+		}
+	}
 }
-void FNexusRelay::Stop()
+void FNexusRelay::CloseRelay()
 {
-
-}
-void FNexusRelay::EnsureCompletion()
-{
-
+	if (TcpListener)
+	{
+		TcpListener->Stop();
+		delete TcpListener;
+		TcpListener = nullptr;
+	}
+	for (TPair<FString, FNexusRelayConnection*> pair : Connections)
+	{
+		if (pair.Value)
+		{
+			pair.Value->EnsureCompletion();
+		}
+	}
+	Connections.Empty();
+	PendingConnections.Empty();
 }
 
 
@@ -51,7 +91,17 @@ void FNexusRelay::TestConnections()
 		Connections.Remove(empty);
 	}
 }
-void FNexusRelay::ReadConnections(UWorldNexus* WorldNexus)
+void FNexusRelay::PollPendingConnections()
+{
+	if (PendingConnections.IsEmpty())
+		return;
+	FNexusRelayConnection* newConnection = nullptr;
+	while (PendingConnections.Dequeue(newConnection))
+	{
+		AddNewConnection(newConnection);
+	}
+}
+void FNexusRelay::ReadMessages(UWorldNexus* WorldNexus)
 {
 	for (TPair<FString, FNexusRelayConnection*> pair : Connections)
 	{
@@ -75,13 +125,13 @@ void FNexusRelay::SendMessage(const FString& InEndpointString, const FNexusMessa
 		}
 	}
 }
-void FNexusRelay::AddConnection(FSocket* InSocket, const FIPv4Endpoint& InRemoteEndpoint)
+void FNexusRelay::AddNewConnection(FNexusRelayConnection* InConnection)
 {
-	FString endpointString = InRemoteEndpoint.ToString();
-	FNexusRelayConnection* newConnection = new FNexusRelayConnection(InSocket, InRemoteEndpoint);
+	FString endpointString = InConnection->RemoteEndpoint.ToString();
 	if (!Connections.Contains(endpointString))
 	{
-		Connections.Add(endpointString, newConnection);
+		Connections.Add(endpointString, InConnection);
+		UE_LOG(LogNexus, Log, TEXT("Added new nexus connection at [%s]"), *endpointString);
 	}
 	else
 	{
@@ -90,7 +140,8 @@ void FNexusRelay::AddConnection(FSocket* InSocket, const FIPv4Endpoint& InRemote
 			connection->EnsureCompletion();
 			connection = nullptr;
 		}
-		Connections[endpointString] = newConnection;
+		Connections[endpointString] = InConnection;
+		UE_LOG(LogNexus, Log, TEXT("Replaced existing connection at [%s]"), *endpointString);
 	}
 }
 void FNexusRelay::RemoveConnection(const FString& InRemoteEndpointString)

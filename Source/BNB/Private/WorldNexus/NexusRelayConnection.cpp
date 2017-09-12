@@ -99,7 +99,7 @@ void FNexusRelayConnection::Exit() { }
 *****************************************************************************/
 void FNexusRelayConnection::EnsureCompletion()
 {
-	if (Thread != nullptr)
+	if (Thread)
 	{
 		bRun = false;
 		Thread->WaitForCompletion();
@@ -109,7 +109,11 @@ void FNexusRelayConnection::EnsureCompletion()
 	if (Socket)
 	{
 		Socket->Close();
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(Socket);
+		Socket = nullptr;
 	}
+	SendQueue.Empty();
+	RecvQueue.Empty();
 }
 bool FNexusRelayConnection::ReceiveMessages()
 {	

@@ -21,6 +21,7 @@ public:
 	bool Send(FNexusMessage Message);
 	// stops the thread and finishes all message transfer before cleaning up
 	void EnsureCompletion();
+	FIPv4Endpoint RemoteEndpoint;
 protected:
 
 	bool ReceiveMessages();
@@ -37,7 +38,7 @@ private:
 	TQueue<FNexusMessage> RecvQueue;
 	TQueue<FNexusMessage> SendQueue;
 
-	FIPv4Endpoint RemoteEndpoint;
+	
 	FSocket* Socket;
 	FRunnableThread* Thread;
 	bool bRun;

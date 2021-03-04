@@ -1,7 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #pragma once
 #include "CoreMinimal.h"
+
+#include "Containers/Queue.h"
 
 class FSocket;
 class UWorldNexus;
@@ -9,6 +11,7 @@ struct FIPv4Endpoint;
 struct FNexusMessage;
 class FNexusRelayConnection;
 class FTcpListener;
+
 class FNexusRelay
 {
 public:

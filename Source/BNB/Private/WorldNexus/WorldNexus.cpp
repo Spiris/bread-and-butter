@@ -1,12 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
-#include "WorldNexus.h"
+#include "WorldNexus/WorldNexus.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "GameInstanceCore.h"
 #include "NexusRelay.h"
-#include "ConfigCacheIni.h"
-#include "IPv4Endpoint.h"
+#include "Misc/ConfigCacheIni.h"
+#include "Engine/Engine.h"
+#include "Interfaces/IPv4/IPv4Endpoint.h"
+
 
 FIPv4Endpoint UWorldNexus::GetLocalEndpoint()
 {
@@ -33,13 +35,14 @@ UWorldNexus::UWorldNexus() : Relay(nullptr) { }
 
 void UWorldNexus::InitializeNexus()
 {
-	Relay = new FNexusRelay();
-	if (Relay)
-	{
-		Relay->OpenRelay(GetLocalEndpoint());
-		UE_LOG(LogNexus, Log, TEXT("Initialized nexus."));
-		GetWorld()->GetTimerManager().SetTimer(RelayPollingHandle, this, &UWorldNexus::PollNexusRelay, 0.1f, true);
-	}
+ 	Relay = new FNexusRelay();
+ 	if (Relay)
+ 	{
+		int32 Port = 0; GetWorld()->GetNetDriver(); // ???
+ 		Relay->OpenRelay(GetLocalEndpoint());
+ 		UE_LOG(LogNexus, Log, TEXT("Initialized nexus."));
+ 		//GetWorld()->GetTimerManager().SetTimer(RelayPollingHandle, this, &UWorldNexus::PollNexusRelay, 0.1f, true);
+ 	}
 }
 void UWorldNexus::PollNexusRelay()
 {

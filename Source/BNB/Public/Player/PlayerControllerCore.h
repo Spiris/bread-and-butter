@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #pragma once
 
@@ -13,7 +13,8 @@ UCLASS()
 class BNB_API APlayerControllerCore : public APlayerController
 {
 	GENERATED_BODY()
-
+public:
+	virtual void BeginPlay() override;
 
 	// CHARACTER -
 public:

@@ -1,26 +1,24 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #include "GameInstanceCore.h"
-#include "WorldNexus.h"
+#include "WorldNexus/WorldNexus.h"
 
 UGameInstanceCore::UGameInstanceCore()
 	: Nexus(nullptr)
 {
 
 }
-UWorldNexus* UGameInstanceCore::GetWorldNexus() 
-{ 
-	if (!Nexus)
-	{
-		Nexus = NewObject<UWorldNexus>(this);
-		Nexus->InitializeNexus();
-	}
-	return Nexus; 
-}
+UWorldNexus* UGameInstanceCore::GetWorldNexus()  {  return Nexus;  }
 void UGameInstanceCore::Init() 
 {
 	Super::Init();
-	GetWorldNexus();
+	//FirstLoadHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddRaw(this, &UGameInstanceCore::PostFirstLoadMap);
+	Nexus = NewObject<UWorldNexus>(this);	
+}
+void UGameInstanceCore::PostFirstLoadMap(UWorld* World)
+{
+	FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(FirstLoadHandle);
+	Nexus->InitializeNexus();
 }
 void UGameInstanceCore::Shutdown()
 {

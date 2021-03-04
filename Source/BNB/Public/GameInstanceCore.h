@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #pragma once
 
@@ -12,6 +12,8 @@ class BNB_API UGameInstanceCore : public UGameInstance
 public:
 	UGameInstanceCore();
 	virtual void Init() override;
+	FDelegateHandle FirstLoadHandle;
+	void PostFirstLoadMap(UWorld* World);
 	virtual void Shutdown() override;
 	UWorldNexus* GetWorldNexus();
 protected:

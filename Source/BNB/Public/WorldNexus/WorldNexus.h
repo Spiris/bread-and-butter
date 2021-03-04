@@ -1,13 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #pragma once
 #include "CoreMinimal.h"
 #include "NexusMessage.h"
 #include "WorldNexus.generated.h"
+
 DECLARE_LOG_CATEGORY_CLASS(LogNexus, Log, All);
-/**
- * 
- */
+
 class FNexusRelay;
 class UGameInstanceCore;
 
@@ -29,7 +28,7 @@ public:
 	
 	
 private:
-	FTimerHandle RelayPollingHandle;
+	//FTimerHandle RelayPollingHandle;
 	void PollNexusRelay();
 	FNexusRelay* Relay;
 };

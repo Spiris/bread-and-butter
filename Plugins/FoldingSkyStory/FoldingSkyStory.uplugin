@@ -1,0 +1,34 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Folding Sky Story Plugin",
+	"Category": "Folding Sky Story",
+	"Description": "A plugin to allow use of a special story blueprint, node and its component parts needed for basic functions",
+	"CreatedBy": "Jason Ryan AKA Spiris",
+	"CreatedByURL": "https://github.com/Spiris",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "FoldingSkyStory",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "FoldingSkyStoryBlueprintNodes",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "FoldingSkyStoryEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

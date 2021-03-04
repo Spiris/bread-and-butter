@@ -1,11 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Runnable.h"
-#include "Queue.h"
-#include "IPv4Endpoint.h"
+#include "HAL/Runnable.h"
+#include "Containers/Queue.h"
+#include "Interfaces/IPv4/IPv4Endpoint.h"
 
 struct FNexusMessage;
 class FSocket;

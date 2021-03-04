@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
-#include "NexusRelayConnection.h"
+#include "WorldNexus/NexusRelayConnection.h"
 #include "Sockets.h"
-#include "NexusMessage.h"
-#include "BufferArchive.h"
+#include "WorldNexus/NexusMessage.h"
+#include "Serialization/BufferArchive.h"
 
 FNexusRelayConnection::FNexusRelayConnection(FSocket* InSocket, const FIPv4Endpoint& InRemoteEndpoint)
 	: RemoteEndpoint(InRemoteEndpoint)

@@ -1,15 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
-#include "NexusRelay.h"
-#include "IPv4Endpoint.h"
-#include "NexusRelayConnection.h"
-#include "NexusMessage.h"
-#include "WorldNexus.h"
+#include "WorldNexus/NexusRelay.h"
+#include "WorldNexus/NexusRelayConnection.h"
+#include "WorldNexus/NexusMessage.h"
+#include "WorldNexus/WorldNexus.h"
+#include "Interfaces/IPv4/IPv4Address.h"
 #include "Sockets.h"
 #include "Common/TcpListener.h"
 
 FNexusRelay::FNexusRelay()
 {
+	TcpListener = nullptr;
 }
 FIPv4Endpoint FNexusRelay::GetLocalEndpoint()
 {
@@ -29,7 +30,15 @@ void FNexusRelay::OpenRelay(const FIPv4Endpoint& InListenEndpoint)
 	{
 		TcpListener = new FTcpListener(InListenEndpoint);
 		TcpListener->OnConnectionAccepted().BindRaw(this, &FNexusRelay::AcceptIncomingConnection);
-		UE_LOG(LogNexus, Log, TEXT("Nexus relay listening for connections on %s"), *InListenEndpoint.ToString());
+		if (TcpListener->Init())
+		{			
+			UE_LOG(LogNexus, Log, TEXT("Nexus relay listening for connections on %s"), *TcpListener->GetLocalEndpoint().ToString());
+		}
+		FSocket* socket = FTcpSocketBuilder(TEXT("SocketToConnect")).Build();
+		socket->Connect(InListenEndpoint.ToInternetAddr().Get());
+		int32 sent = 0;
+		socket->Send(new uint8(), 1, sent);
+		UE_LOG(LogTemp, Log, TEXT("Sent a packet."));
 	}
 }
 bool FNexusRelay::AcceptIncomingConnection(FSocket* InSocket, const FIPv4Endpoint& Endpoint)

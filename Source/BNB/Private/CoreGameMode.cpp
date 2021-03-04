@@ -1,0 +1,8 @@
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
+
+#include "CoreGameMode.h"
+
+
+ACoreGameMode::ACoreGameMode()
+{
+}

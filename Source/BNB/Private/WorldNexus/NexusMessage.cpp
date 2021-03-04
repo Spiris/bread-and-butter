@@ -1,7 +1,8 @@
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
-#include "NexusMessage.h"
+#include "WorldNexus/NexusMessage.h"
 #include "Sockets.h"
-#include "BufferReader.h"
+#include "Serialization/BufferReader.h"
 FNexusMessage::FNexusMessage() : 
 	Header(),
 	Content(),

@@ -1,7 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Folding Sky Games LLC 2021 All rights reserved.
 
-#include "PlayerControllerCore.h"
-#include "PlayerCore.h"
+#include "Player/PlayerControllerCore.h"
+#include "Player/PlayerCore.h"
+#include "WorldNexus/WorldNexus.h"
+
+void APlayerControllerCore::BeginPlay()
+{
+	Super::BeginPlay();
+	UWorldNexus::Get(this)->InitializeNexus();
+}
+
+
 FString APlayerControllerCore::GetCharacterName()
 {
 	return FString();
